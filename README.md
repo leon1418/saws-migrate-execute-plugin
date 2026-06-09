@@ -21,7 +21,7 @@ Given a Track 2 migration plan (produced by the `saws-migrate` planning skill), 
 ## Installation
 
 ```bash
-/plugin marketplace add github:leon1418/saws-migrate-execute-plugin
+/plugin marketplace add leon1418/saws-migrate-execute-plugin
 /plugin install saws-migrate-execute@saws-migrate
 ```
 
