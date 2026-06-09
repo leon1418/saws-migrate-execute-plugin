@@ -43,4 +43,4 @@ The plugin discovers available plans and guides you through the process interact
 
 ## License
 
-UNLICENSED — internal use.
+MIT

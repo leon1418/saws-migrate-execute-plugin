@@ -144,26 +144,29 @@ detected and let them override.
 
 ### 3c. Source-provider API key (optional)
 
-Enables live source-model baseline in Eval. If the user declines, Eval uses a static/synthetic
-baseline and the report banners the gap. Never echo the key; write it to a mode-600 env file and
-pass only a reference (`sourceKeyRef`).
+Enables live source-model baseline in Eval (side-by-side comparison of source model vs Bedrock).
+If the user declines, Eval uses LLM-as-judge absolute scoring only (no source-vs-target comparison)
+and the report banners the gap.
 
-**IMPORTANT:** Do NOT use AskUserQuestion's free-text "Other" box for the API key — that would
-expose it in the transcript. Instead, provide a shell command the user can run in their terminal:
+Use **AskUserQuestion** to ask: "Do you have an API key for the source model (e.g. OpenAI key for
+GPT-4o)? Providing it enables a side-by-side quality comparison between your current model and
+Bedrock. Without it, evaluation uses absolute scoring only."
 
-```
-! read -sp "Paste your source-provider API key: " KEY && printf "%s" "$KEY" > <repo>/.saws-migrate/.source-provider-env && chmod 600 <repo>/.saws-migrate/.source-provider-env && echo " ✓ key saved"
-```
+Options:
+- **Yes — I'll paste my key** → follow up with a SECOND AskUserQuestion asking them to paste the
+  key (the "Other" free-text box is fine for this). Once received, write it to the env file:
+  ```bash
+  mkdir -p <repo>/.saws-migrate && printf "%s" "<the key>" > <repo>/.saws-migrate/.source-provider-env && chmod 600 <repo>/.saws-migrate/.source-provider-env
+  ```
+  Set `sourceBaselineAvailable = true`, `sourceKeyRef = "<repo>/.saws-migrate/.source-provider-env"`.
+- **Skip — proceed without source comparison** → Set `sourceBaselineAvailable = false`, `sourceKeyRef = ""`.
 
-Then offer two AskUserQuestion options:
-- **Key saved — continue with live baseline**
-- **Skip — proceed without live baseline**
+**IMPORTANT — do NOT use `export` or environment variables.** Environment variables do not persist
+across Bash tool calls or into workflow subagents. The key MUST be written to the file at
+`<repo>/.saws-migrate/.source-provider-env` — the evaluator's `run-source-model-baseline` skill
+reads it from there.
 
-Record the user's choice as a boolean `sourceBaselineAvailable`:
-- "Key saved" → `sourceBaselineAvailable = true`, `sourceKeyRef = "<repo>/.saws-migrate/.source-provider-env"`
-- "Skip" → `sourceBaselineAvailable = false`, `sourceKeyRef = ""`
-
-These are passed to the workflow in Step 5 so the evaluator knows whether to run the live baseline.
+These values are passed to the workflow in Step 5 so the evaluator knows whether to run the live baseline.
 
 ## Step 4 — Bedrock fail-fast preflight
 
