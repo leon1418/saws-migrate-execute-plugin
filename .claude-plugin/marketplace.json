@@ -1,0 +1,14 @@
+{
+  "name": "saws-migrate",
+  "description": "SAWS Migrate — Claude Code plugins for executing GCP/Gemini/OpenAI → AWS migrations.",
+  "owner": {
+    "name": "SAWS Migrate"
+  },
+  "plugins": [
+    {
+      "name": "saws-migrate-execute",
+      "source": "./saws-migrate-execute",
+      "description": "Execute an AI-only (Gemini/OpenAI → Amazon Bedrock) migration plan inside Claude Code: rewrites LLM SDK calls, evaluates against Bedrock, and delivers a ready-to-merge git branch."
+    }
+  ]
+}
